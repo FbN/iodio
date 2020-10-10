@@ -1,0 +1,40 @@
+{
+    "name": "iodio",
+    "version": "0.1.0",
+    "type": "module",
+    "description": "Monadic query builder (Knex wrapper: Fluture powered)",
+    "main": "index.js",
+    "repository": "https://github.com/FbN/iodio",
+    "author": "Fabiano Taioli <ftaioli@gmail.com>",
+    "license": "MIT",
+    "private": false,
+    "devDependencies": {
+        "ava": "^3.13.0",
+        "eslint": "^7.11.0",
+        "eslint-config-standard": "^14.1.1",
+        "eslint-plugin-import": "^2.22.1",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-promise": "^4.2.1",
+        "eslint-plugin-standard": "^4.0.1",
+        "sqlite3": "^5.0.0",
+        "fluture": "^13.0.1",
+        "knex": "^0.21.6"
+    },
+    "peerDependencies": {
+        "fluture": "^13.0.1",
+        "knex": "^0.21.6"
+    },
+    "dependencies": {
+        "monet": "^0.9.1"
+    },
+    "ava": {
+        "failFast": true,
+        "verbose": true,
+        "extensions": [
+            "js"
+        ]
+    },
+    "scripts": {
+        "test": "ava tests/*"
+    }
+}

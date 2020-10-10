@@ -1,0 +1,15 @@
+{
+    "extends": "standard",
+    "parserOptions": {
+        "ecmaVersion": 9
+    },
+    "rules": {
+        "indent": [2, 4],
+        "camelcase": [
+            0,
+            {
+                "properties": "always"
+            }
+        ]
+    }
+}

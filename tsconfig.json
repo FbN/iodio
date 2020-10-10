@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "checkJs": true,
+        "target": "es5",
+        "allowJs": true,
+        "noEmit": true,
+        "allowSyntheticDefaultImports": true,
+        "baseUrl": ".",
+        "lib": ["ESNext", "ScriptHost"],
+        "maxNodeModuleJsDepth": 10
+    },
+    "exclude": ["node_modules", "**/node_modules/*"],
+    "files": ["index.js"]
+}
