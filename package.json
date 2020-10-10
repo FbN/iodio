@@ -4,11 +4,13 @@
     "type": "module",
     "description": "Monadic query builder (Knex wrapper: Fluture powered)",
     "main": "index.js",
+    "types": "index.d.ts",
     "repository": "https://github.com/FbN/iodio",
     "author": "Fabiano Taioli <ftaioli@gmail.com>",
     "license": "MIT",
     "private": false,
     "devDependencies": {
+        "@types/node": "^14.11.8",
         "ava": "^3.13.0",
         "eslint": "^7.11.0",
         "eslint-config-standard": "^14.1.1",
@@ -16,9 +18,10 @@
         "eslint-plugin-node": "^11.1.0",
         "eslint-plugin-promise": "^4.2.1",
         "eslint-plugin-standard": "^4.0.1",
-        "sqlite3": "^5.0.0",
         "fluture": "^13.0.1",
-        "knex": "^0.21.6"
+        "knex": "^0.21.6",
+        "sqlite3": "^5.0.0",
+        "typescript": "^4.0.3"
     },
     "peerDependencies": {
         "fluture": "^13.0.1",
@@ -35,6 +38,7 @@
         ]
     },
     "scripts": {
-        "test": "ava tests/*"
+        "test": "ava --node-arguments='--no-warnings' tests/*",
+        "types": "rm index.d.ts && tsc"
     }
 }
