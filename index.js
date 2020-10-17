@@ -1,48 +1,53 @@
 import * as F from 'fluture'
 import Monet from 'monet'
+
 const { Reader } = Monet
+
 /** @typedef { import("fluture").FutureInstance} FutureInstance */
+
 /**
  * @template e
  * @template a
  * @typedef { import("monet").Reader<e, a> } ReaderType
  **/
+
 /** @typedef {(p:object) => object} ParamsFunction */
+
 /** @typedef { import("knex").QueryBuilder} QueryBuilder */
 
 const I = a => a
 
 /**
- * @param {ParamsFunction} pF params
+ * @param {ParamsFunction} pPred params
  * @param {ReaderType<ParamsFunction, QueryBuilder>} qbR
  * @param {ReaderType<QueryBuilder, FutureInstance>} fR
  */
-const Iodio = (pF, qbR, fR) => {
-    const qbCollapse = () => qbR.run(pF({}))
+const Iodio = (pPred, qbR, fR) => {
+    const qbCollapse = () => qbR.run(pPred({}))
 
     const collapse = () => fR.run(qbCollapse())
 
     const promise = () => F.promise(collapse())
 
-    const chain = pred => pred(pF, qbR, fR)
+    const chain = pred => pred(pPred, qbR, fR)
 
     const qMap = pred =>
         Iodio.of(
-            pF,
+            pPred,
             qbR.flatMap(qb => Reader(p => pred(qb, p))),
             fR
         )
 
     const map = pred =>
         Iodio.of(
-            pF,
+            pPred,
             qbR,
             fR.map(f => f.pipe(F.map(pred)))
         )
 
     const pipe = pred =>
         Iodio.of(
-            pF,
+            pPred,
             qbR,
             fR.map(f => f.pipe(pred))
         )
@@ -50,7 +55,7 @@ const Iodio = (pF, qbR, fR) => {
     const ap = predI =>
         predI.chain((_, __, predfR) =>
             Iodio.of(
-                pF,
+                pPred,
                 qbR,
                 fR.chain(valueF => predfR.map(predF => F.ap(valueF)(predF)))
             )
@@ -58,19 +63,19 @@ const Iodio = (pF, qbR, fR) => {
 
     const bimap = (qPred, fPred) =>
         Iodio.of(
-            pF,
+            pPred,
             qbR.flatMap(qb => Reader(p => qPred(qb, p))),
             fR.map(f => f.pipe(F.map(fPred)))
         )
 
-    const pMap = pred => Iodio.of(p => pred(pF(p)), qbR, fR)
+    const pMap = pred => Iodio.of(p => pred(pPred(p)), qbR, fR)
 
     const fork = left => right => collapse().pipe(F.fork(left)(right))
 
     const toString = () =>
         'Iodio:\n    ' +
         '[' +
-        JSON.stringify(pF({})) +
+        JSON.stringify(pPred({})) +
         ']\n    [' +
         qbCollapse().toString() +
         ']\n    [' +
