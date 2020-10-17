@@ -26,6 +26,13 @@ const Iodio = (pF, qbR, fR) => {
 
     const chain = pred => pred(pF, qbR, fR)
 
+    const qMap = pred =>
+        Iodio.of(
+            pF,
+            qbR.flatMap(qb => Reader(p => pred(qb, p))),
+            fR
+        )
+
     const map = pred =>
         Iodio.of(
             pF,
@@ -49,44 +56,46 @@ const Iodio = (pF, qbR, fR) => {
             )
         )
 
+    const bimap = (qPred, fPred) =>
+        Iodio.of(
+            pF,
+            qbR.flatMap(qb => Reader(p => qPred(qb, p))),
+            fR.map(f => f.pipe(F.map(fPred)))
+        )
+
+    const pMap = pred => Iodio.of(p => pred(pF(p)), qbR, fR)
+
+    const fork = left => right => collapse().pipe(F.fork(left)(right))
+
+    const toString = () =>
+        'Iodio:\n    ' +
+        '[' +
+        JSON.stringify(pF({})) +
+        ']\n    [' +
+        qbCollapse().toString() +
+        ']\n    [' +
+        collapse().toString() +
+        ']'
+
+    const first = () => promise().then(r => r && (Array.isArray(r) ? r[0] : r))
+
     return {
-        pMap: pred => Iodio.of(p => pred(pF(p)), qbR, fR),
-
-        qMap: pred =>
-            Iodio.of(
-                pF,
-                qbR.flatMap(qb => Reader(p => pred(qb, p))),
-                fR
-            ),
-
+        pMap,
+        qMap,
         map,
-
         pipe,
-
         ap,
-
         chain,
-
-        fork: left => right => collapse().pipe(F.fork(left)(right)),
-
+        bimap,
+        fork,
         promise,
-
-        toString: () =>
-            'Iodio:\n    ' +
-            '[' +
-            JSON.stringify(pF({})) +
-            ']\n    [' +
-            qbCollapse().toString() +
-            ']\n    [' +
-            collapse().toString() +
-            ']',
-
-        first: () => promise().then(r => r && (Array.isArray(r) ? r[0] : r)),
-
+        toString,
+        first,
         // Fantay Land Interface
         'fantasy-land/map': map,
         'fantasy-land/ap': ap,
-        'fantasy-land/chain': chain
+        'fantasy-land/chain': chain,
+        'fantasy-land/bimap': bimap
     }
 }
 

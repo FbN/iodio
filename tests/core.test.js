@@ -221,3 +221,50 @@ test('Monad: right identity', t => {
         Iodio(...x).toString()
     )
 })
+
+test('Bifunctor: bimap', async t => {
+    const { u, g1, f1 } = t.context
+
+    t.is(
+        (
+            await u
+                .bimap(
+                    (qb, p) => qb.where({ Composer: p.Composer }),
+                    res => res.map(f1)
+                )
+                .pMap(() => ({
+                    Composer: 'Kurt Cobain'
+                }))
+                .first()
+        ).Name,
+        'Intro'
+    )
+})
+
+test('Bifunctor: identity', async t => {
+    const { u, g1, f1 } = t.context
+    t.deepEqual(await u.bimap(I, I).first(), await u.first())
+})
+
+test('Bifunctor: composition', async t => {
+    const { u } = t.context
+
+    const g = qb => qb.offset(10)
+    const f = qb => qb.limit(3)
+
+    const h = res => res.map(row => ({ ...row, Name: '*' + row.Name }))
+    const i = res => res.map(row => ({ ...row, Name: row.Name + '*' }))
+
+    t.deepEqual(
+        await u
+            .bimap(
+                a => f(g(a)),
+                b => h(i(b))
+            )
+            .first(),
+        await u
+            .bimap(g, i)
+            .bimap(f, h)
+            .first()
+    )
+})
