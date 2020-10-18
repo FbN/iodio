@@ -1,6 +1,7 @@
 export default Iodio;
 export type FutureInstance<left, right> = F.FutureInstance<left, right>;
 export type ReaderType<e, a> = Monet.Reader<e, a>;
+export type knex = import("knex")<any, unknown[]>;
 export type QueryBuilder<record, result> = import("knex").QueryBuilder<record, result>;
 export type ParamsFunction = (p: object) => object;
 export type QueryBuilderT<T> = import("knex").QueryBuilder<any, T[]>;
@@ -58,57 +59,63 @@ declare const Iodio: {
         'fantasy-land/bimap': (qPred: (qb: import("knex").QueryBuilder<any, T>, p?: object) => import("knex").QueryBuilder<any, T>, fPred: (f: F.FutureInstance<any, T>) => F.FutureInstance<any, any>) => IodioInstance<any>;
     };
     of: any;
-    lift(db: any, args: any): {
+    /**
+     * @template T
+     * @param  {knex} db
+     * @param  {Array<any>} args Knex arguments
+     * @return {IodioInstance<T>}
+     */
+    lift<T_2>(db: knex, args: Array<any>): {
         pMap: (pred: ParamsFunction) => object;
-        qMap: (pred: (qb: import("knex").QueryBuilder<any, any>, p?: object) => import("knex").QueryBuilder<any, any>) => any;
-        map: (pred: (f: F.FutureInstance<any, any>) => F.FutureInstance<any, any>) => any;
-        pipe: (pred: F.FutureInstance<any, any>) => IodioInstance<any>;
+        qMap: (pred: (qb: import("knex").QueryBuilder<any, T_2>, p?: object) => import("knex").QueryBuilder<any, T_2>) => any;
+        map: (pred: (f: F.FutureInstance<any, T_2>) => F.FutureInstance<any, T_2>) => any;
+        pipe: (pred: F.FutureInstance<any, T_2 extends Function ? T_2 : T_2[]>) => IodioInstance<any>;
         ap: (predI: IodioInstance<Function>) => IodioInstance<any>;
-        chain: (a: ParamsFunction, b: Monet.Reader<(p: object) => object, import("knex").QueryBuilder<any, any[]>>, c: Monet.Reader<import("knex").QueryBuilder<any, any[]>, F.FutureInstance<any, any>>) => IodioInstance<any>;
-        bimap: (qPred: (qb: import("knex").QueryBuilder<any, any>, p?: object) => import("knex").QueryBuilder<any, any>, fPred: (f: F.FutureInstance<any, any>) => F.FutureInstance<any, any>) => IodioInstance<any>;
+        chain: (a: ParamsFunction, b: Monet.Reader<(p: object) => object, import("knex").QueryBuilder<any, T_2[]>>, c: Monet.Reader<import("knex").QueryBuilder<any, T_2[]>, F.FutureInstance<any, T_2 extends Function ? T_2 : T_2[]>>) => IodioInstance<any>;
+        bimap: (qPred: (qb: import("knex").QueryBuilder<any, T_2>, p?: object) => import("knex").QueryBuilder<any, T_2>, fPred: (f: F.FutureInstance<any, T_2>) => F.FutureInstance<any, any>) => IodioInstance<any>;
         fork: (left: any) => (right: any) => F.Cancel;
         promise: () => Promise<any>;
         toString: () => string;
         first: () => Promise<any>;
-        'fantasy-land/map': (pred: (f: F.FutureInstance<any, any>) => F.FutureInstance<any, any>) => any;
+        'fantasy-land/map': (pred: (f: F.FutureInstance<any, T_2>) => F.FutureInstance<any, T_2>) => any;
         'fantasy-land/ap': (predI: IodioInstance<Function>) => IodioInstance<any>;
-        'fantasy-land/chain': (a: ParamsFunction, b: Monet.Reader<(p: object) => object, import("knex").QueryBuilder<any, any[]>>, c: Monet.Reader<import("knex").QueryBuilder<any, any[]>, F.FutureInstance<any, any>>) => IodioInstance<any>;
-        'fantasy-land/bimap': (qPred: (qb: import("knex").QueryBuilder<any, any>, p?: object) => import("knex").QueryBuilder<any, any>, fPred: (f: F.FutureInstance<any, any>) => F.FutureInstance<any, any>) => IodioInstance<any>;
+        'fantasy-land/chain': (a: ParamsFunction, b: Monet.Reader<(p: object) => object, import("knex").QueryBuilder<any, T_2[]>>, c: Monet.Reader<import("knex").QueryBuilder<any, T_2[]>, F.FutureInstance<any, T_2 extends Function ? T_2 : T_2[]>>) => IodioInstance<any>;
+        'fantasy-land/bimap': (qPred: (qb: import("knex").QueryBuilder<any, T_2>, p?: object) => import("knex").QueryBuilder<any, T_2>, fPred: (f: F.FutureInstance<any, T_2>) => F.FutureInstance<any, any>) => IodioInstance<any>;
     };
     _initFromQb: typeof initFromQb;
-    resolve: <T_2>(v: T_2 extends Function ? T_2 : T_2[]) => {
+    resolve: <T_3>(v: T_3 extends Function ? T_3 : T_3[]) => {
         pMap: (pred: ParamsFunction) => object;
-        qMap: (pred: (qb: import("knex").QueryBuilder<any, T_2>, p?: object) => import("knex").QueryBuilder<any, T_2>) => any;
-        map: (pred: (f: F.FutureInstance<any, T_2>) => F.FutureInstance<any, T_2>) => any;
-        pipe: (pred: F.FutureInstance<any, T_2 extends Function ? T_2 : T_2[]>) => IodioInstance<any>;
+        qMap: (pred: (qb: import("knex").QueryBuilder<any, T_3>, p?: object) => import("knex").QueryBuilder<any, T_3>) => any;
+        map: (pred: (f: F.FutureInstance<any, T_3>) => F.FutureInstance<any, T_3>) => any;
+        pipe: (pred: F.FutureInstance<any, T_3 extends Function ? T_3 : T_3[]>) => IodioInstance<any>;
         ap: (predI: IodioInstance<Function>) => IodioInstance<any>;
-        chain: (a: ParamsFunction, b: Monet.Reader<(p: object) => object, import("knex").QueryBuilder<any, T_2[]>>, c: Monet.Reader<import("knex").QueryBuilder<any, T_2[]>, F.FutureInstance<any, T_2 extends Function ? T_2 : T_2[]>>) => IodioInstance<any>;
-        bimap: (qPred: (qb: import("knex").QueryBuilder<any, T_2>, p?: object) => import("knex").QueryBuilder<any, T_2>, fPred: (f: F.FutureInstance<any, T_2>) => F.FutureInstance<any, any>) => IodioInstance<any>;
+        chain: (a: ParamsFunction, b: Monet.Reader<(p: object) => object, import("knex").QueryBuilder<any, T_3[]>>, c: Monet.Reader<import("knex").QueryBuilder<any, T_3[]>, F.FutureInstance<any, T_3 extends Function ? T_3 : T_3[]>>) => IodioInstance<any>;
+        bimap: (qPred: (qb: import("knex").QueryBuilder<any, T_3>, p?: object) => import("knex").QueryBuilder<any, T_3>, fPred: (f: F.FutureInstance<any, T_3>) => F.FutureInstance<any, any>) => IodioInstance<any>;
         fork: (left: any) => (right: any) => F.Cancel;
         promise: () => Promise<any>;
         toString: () => string;
         first: () => Promise<any>;
-        'fantasy-land/map': (pred: (f: F.FutureInstance<any, T_2>) => F.FutureInstance<any, T_2>) => any;
+        'fantasy-land/map': (pred: (f: F.FutureInstance<any, T_3>) => F.FutureInstance<any, T_3>) => any;
         'fantasy-land/ap': (predI: IodioInstance<Function>) => IodioInstance<any>;
-        'fantasy-land/chain': (a: ParamsFunction, b: Monet.Reader<(p: object) => object, import("knex").QueryBuilder<any, T_2[]>>, c: Monet.Reader<import("knex").QueryBuilder<any, T_2[]>, F.FutureInstance<any, T_2 extends Function ? T_2 : T_2[]>>) => IodioInstance<any>;
-        'fantasy-land/bimap': (qPred: (qb: import("knex").QueryBuilder<any, T_2>, p?: object) => import("knex").QueryBuilder<any, T_2>, fPred: (f: F.FutureInstance<any, T_2>) => F.FutureInstance<any, any>) => IodioInstance<any>;
+        'fantasy-land/chain': (a: ParamsFunction, b: Monet.Reader<(p: object) => object, import("knex").QueryBuilder<any, T_3[]>>, c: Monet.Reader<import("knex").QueryBuilder<any, T_3[]>, F.FutureInstance<any, T_3 extends Function ? T_3 : T_3[]>>) => IodioInstance<any>;
+        'fantasy-land/bimap': (qPred: (qb: import("knex").QueryBuilder<any, T_3>, p?: object) => import("knex").QueryBuilder<any, T_3>, fPred: (f: F.FutureInstance<any, T_3>) => F.FutureInstance<any, any>) => IodioInstance<any>;
     };
-    'fantasy-land/of': <T_2>(v: T_2 extends Function ? T_2 : T_2[]) => {
+    'fantasy-land/of': <T_3>(v: T_3 extends Function ? T_3 : T_3[]) => {
         pMap: (pred: ParamsFunction) => object;
-        qMap: (pred: (qb: import("knex").QueryBuilder<any, T_2>, p?: object) => import("knex").QueryBuilder<any, T_2>) => any;
-        map: (pred: (f: F.FutureInstance<any, T_2>) => F.FutureInstance<any, T_2>) => any;
-        pipe: (pred: F.FutureInstance<any, T_2 extends Function ? T_2 : T_2[]>) => IodioInstance<any>;
+        qMap: (pred: (qb: import("knex").QueryBuilder<any, T_3>, p?: object) => import("knex").QueryBuilder<any, T_3>) => any;
+        map: (pred: (f: F.FutureInstance<any, T_3>) => F.FutureInstance<any, T_3>) => any;
+        pipe: (pred: F.FutureInstance<any, T_3 extends Function ? T_3 : T_3[]>) => IodioInstance<any>;
         ap: (predI: IodioInstance<Function>) => IodioInstance<any>;
-        chain: (a: ParamsFunction, b: Monet.Reader<(p: object) => object, import("knex").QueryBuilder<any, T_2[]>>, c: Monet.Reader<import("knex").QueryBuilder<any, T_2[]>, F.FutureInstance<any, T_2 extends Function ? T_2 : T_2[]>>) => IodioInstance<any>;
-        bimap: (qPred: (qb: import("knex").QueryBuilder<any, T_2>, p?: object) => import("knex").QueryBuilder<any, T_2>, fPred: (f: F.FutureInstance<any, T_2>) => F.FutureInstance<any, any>) => IodioInstance<any>;
+        chain: (a: ParamsFunction, b: Monet.Reader<(p: object) => object, import("knex").QueryBuilder<any, T_3[]>>, c: Monet.Reader<import("knex").QueryBuilder<any, T_3[]>, F.FutureInstance<any, T_3 extends Function ? T_3 : T_3[]>>) => IodioInstance<any>;
+        bimap: (qPred: (qb: import("knex").QueryBuilder<any, T_3>, p?: object) => import("knex").QueryBuilder<any, T_3>, fPred: (f: F.FutureInstance<any, T_3>) => F.FutureInstance<any, any>) => IodioInstance<any>;
         fork: (left: any) => (right: any) => F.Cancel;
         promise: () => Promise<any>;
         toString: () => string;
         first: () => Promise<any>;
-        'fantasy-land/map': (pred: (f: F.FutureInstance<any, T_2>) => F.FutureInstance<any, T_2>) => any;
+        'fantasy-land/map': (pred: (f: F.FutureInstance<any, T_3>) => F.FutureInstance<any, T_3>) => any;
         'fantasy-land/ap': (predI: IodioInstance<Function>) => IodioInstance<any>;
-        'fantasy-land/chain': (a: ParamsFunction, b: Monet.Reader<(p: object) => object, import("knex").QueryBuilder<any, T_2[]>>, c: Monet.Reader<import("knex").QueryBuilder<any, T_2[]>, F.FutureInstance<any, T_2 extends Function ? T_2 : T_2[]>>) => IodioInstance<any>;
-        'fantasy-land/bimap': (qPred: (qb: import("knex").QueryBuilder<any, T_2>, p?: object) => import("knex").QueryBuilder<any, T_2>, fPred: (f: F.FutureInstance<any, T_2>) => F.FutureInstance<any, any>) => IodioInstance<any>;
+        'fantasy-land/chain': (a: ParamsFunction, b: Monet.Reader<(p: object) => object, import("knex").QueryBuilder<any, T_3[]>>, c: Monet.Reader<import("knex").QueryBuilder<any, T_3[]>, F.FutureInstance<any, T_3 extends Function ? T_3 : T_3[]>>) => IodioInstance<any>;
+        'fantasy-land/bimap': (qPred: (qb: import("knex").QueryBuilder<any, T_3>, p?: object) => import("knex").QueryBuilder<any, T_3>, fPred: (f: F.FutureInstance<any, T_3>) => F.FutureInstance<any, any>) => IodioInstance<any>;
     };
     ask: Monet.IReaderStatic;
 };

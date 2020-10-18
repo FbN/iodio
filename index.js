@@ -16,6 +16,10 @@ const { Reader } = Monet
  **/
 
 /**
+ * @typedef { import("knex") } knex
+ */
+
+/**
  * @template record
  * @template result
  * @typedef { import("knex").QueryBuilder<record, result>} QueryBuilder
@@ -206,6 +210,12 @@ const resolve = v =>
 
 Iodio.of = Iodio
 
+/**
+ * @template T
+ * @param  {knex} db
+ * @param  {Array<any>} args Knex arguments
+ * @return {IodioInstance<T>}
+ */
 Iodio.lift = (db, args) => Iodio(...initFromQb(db, args))
 
 Iodio._initFromQb = initFromQb
