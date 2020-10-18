@@ -1,5 +1,6 @@
 import * as F from 'fluture'
 import Monet from 'monet'
+import Plazy from 'p-lazy'
 
 const { Reader } = Monet
 
@@ -77,6 +78,7 @@ const { Reader } = Monet
  *          ) => IodioInstance<any>;
  *      bimap: (qPred: QueryPredicate<T>, fPred: ResultPredicate<T, any>) => IodioInstance<any>;
  *      fork: (left: any) => (right: any) => F.Cancel;
+ *      collapse: () => FutureInstanceT<T>;
  *      promise: () => Promise<any>;
  *      toString: () => string;
  *      first: () => Promise<any>;
@@ -180,6 +182,7 @@ const Iodio = (pPred, qbR, fR) => {
         promise,
         toString,
         first,
+        collapse,
         // Fantay Land Interface
         'fantasy-land/map': map,
         'fantasy-land/ap': ap,
@@ -225,5 +228,22 @@ Iodio.resolve = resolve
 Iodio['fantasy-land/of'] = resolve
 
 Iodio.ask = Reader
+
+/**
+ * @type {(iodioList: Array<IodioInstance<any>>) =>
+ *          (pred: (...args: Array<Plazy<any>>) => Promise<any>) =>
+ *              IodioInstance<any>
+ * }
+ */
+Iodio.merge = iodioList => pred =>
+    Iodio(
+        I,
+        Reader(I),
+        Reader(qb =>
+            F.attemptP(() =>
+                pred(...iodioList.map(iodio => Plazy.from(iodio.promise)))
+            )
+        )
+    )
 
 export default Iodio

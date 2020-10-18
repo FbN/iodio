@@ -19,6 +19,7 @@ export type IodioInstance<T> = {
     chain: (a: ParamsFunction, b: Monet.Reader<(p: object) => object, import("knex").QueryBuilder<any, T[]>>, c: Monet.Reader<import("knex").QueryBuilder<any, T[]>, F.FutureInstance<any, T extends Function ? T : T[]>>) => IodioInstance<any>;
     bimap: (qPred: (qb: import("knex").QueryBuilder<any, T>, p?: object) => import("knex").QueryBuilder<any, T>, fPred: (f: F.FutureInstance<any, T>) => F.FutureInstance<any, any>) => IodioInstance<any>;
     fork: (left: any) => (right: any) => F.Cancel;
+    collapse: () => F.FutureInstance<any, T extends Function ? T : T[]>;
     promise: () => Promise<any>;
     toString: () => string;
     first: () => Promise<any>;
@@ -50,6 +51,7 @@ declare const Iodio: {
         chain: (a: ParamsFunction, b: Monet.Reader<(p: object) => object, import("knex").QueryBuilder<any, T[]>>, c: Monet.Reader<import("knex").QueryBuilder<any, T[]>, F.FutureInstance<any, T extends Function ? T : T[]>>) => IodioInstance<any>;
         bimap: (qPred: (qb: import("knex").QueryBuilder<any, T>, p?: object) => import("knex").QueryBuilder<any, T>, fPred: (f: F.FutureInstance<any, T>) => F.FutureInstance<any, any>) => IodioInstance<any>;
         fork: (left: any) => (right: any) => F.Cancel;
+        collapse: () => F.FutureInstance<any, T extends Function ? T : T[]>;
         promise: () => Promise<any>;
         toString: () => string;
         first: () => Promise<any>;
@@ -74,6 +76,7 @@ declare const Iodio: {
         chain: (a: ParamsFunction, b: Monet.Reader<(p: object) => object, import("knex").QueryBuilder<any, T_2[]>>, c: Monet.Reader<import("knex").QueryBuilder<any, T_2[]>, F.FutureInstance<any, T_2 extends Function ? T_2 : T_2[]>>) => IodioInstance<any>;
         bimap: (qPred: (qb: import("knex").QueryBuilder<any, T_2>, p?: object) => import("knex").QueryBuilder<any, T_2>, fPred: (f: F.FutureInstance<any, T_2>) => F.FutureInstance<any, any>) => IodioInstance<any>;
         fork: (left: any) => (right: any) => F.Cancel;
+        collapse: () => F.FutureInstance<any, T_2 extends Function ? T_2 : T_2[]>;
         promise: () => Promise<any>;
         toString: () => string;
         first: () => Promise<any>;
@@ -92,6 +95,7 @@ declare const Iodio: {
         chain: (a: ParamsFunction, b: Monet.Reader<(p: object) => object, import("knex").QueryBuilder<any, T_3[]>>, c: Monet.Reader<import("knex").QueryBuilder<any, T_3[]>, F.FutureInstance<any, T_3 extends Function ? T_3 : T_3[]>>) => IodioInstance<any>;
         bimap: (qPred: (qb: import("knex").QueryBuilder<any, T_3>, p?: object) => import("knex").QueryBuilder<any, T_3>, fPred: (f: F.FutureInstance<any, T_3>) => F.FutureInstance<any, any>) => IodioInstance<any>;
         fork: (left: any) => (right: any) => F.Cancel;
+        collapse: () => F.FutureInstance<any, T_3 extends Function ? T_3 : T_3[]>;
         promise: () => Promise<any>;
         toString: () => string;
         first: () => Promise<any>;
@@ -109,6 +113,7 @@ declare const Iodio: {
         chain: (a: ParamsFunction, b: Monet.Reader<(p: object) => object, import("knex").QueryBuilder<any, T_3[]>>, c: Monet.Reader<import("knex").QueryBuilder<any, T_3[]>, F.FutureInstance<any, T_3 extends Function ? T_3 : T_3[]>>) => IodioInstance<any>;
         bimap: (qPred: (qb: import("knex").QueryBuilder<any, T_3>, p?: object) => import("knex").QueryBuilder<any, T_3>, fPred: (f: F.FutureInstance<any, T_3>) => F.FutureInstance<any, any>) => IodioInstance<any>;
         fork: (left: any) => (right: any) => F.Cancel;
+        collapse: () => F.FutureInstance<any, T_3 extends Function ? T_3 : T_3[]>;
         promise: () => Promise<any>;
         toString: () => string;
         first: () => Promise<any>;
@@ -118,6 +123,13 @@ declare const Iodio: {
         'fantasy-land/bimap': (qPred: (qb: import("knex").QueryBuilder<any, T_3>, p?: object) => import("knex").QueryBuilder<any, T_3>, fPred: (f: F.FutureInstance<any, T_3>) => F.FutureInstance<any, any>) => IodioInstance<any>;
     };
     ask: Monet.IReaderStatic;
+    /**
+     * @type {(iodioList: Array<IodioInstance<any>>) =>
+     *          (pred: (...args: Array<Plazy<any>>) => Promise<any>) =>
+     *              IodioInstance<any>
+     * }
+     */
+    merge(iodioList: Array<IodioInstance<any>>): (pred: (...args: Array<Plazy<any>>) => Promise<any>) => IodioInstance<any>;
 };
 import * as F from "fluture";
 import Monet from "monet";
@@ -126,3 +138,4 @@ import Monet from "monet";
  * @return {IodioTuple<T>}
  */
 declare function initFromQb<T>(db: any, args: any): [(a: any) => any, Monet.Reader<(p: object) => object, import("knex").QueryBuilder<any, T[]>>, Monet.Reader<import("knex").QueryBuilder<any, T[]>, F.FutureInstance<any, T[]>>];
+import Plazy from "p-lazy";
