@@ -39,6 +39,6 @@
     },
     "scripts": {
         "test": "ava --node-arguments='--no-warnings' tests/*",
-        "types": "rm index.d.ts && tsc"
+        "types": "rm index.d.ts; tsc"
     }
 }
