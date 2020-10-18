@@ -94,31 +94,97 @@ This is an example of how to list things you need to use the software and how to
 npm install npm@latest -g
 ```
 
+## Getting Started
+
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-```sh
-git clone https://github.com/your_username_/Project-Name.git
-```
-3. Install NPM packages
-```sh
-npm install
-```
-4. Enter your API in `config.js`
-```JS
-const API_KEY = 'ENTER YOUR API';
-```
+1. Add Iodio to your project
 
+  ```sh
+  yarn add iodio
+  ```
 
+2. If not already in your project add peer dependencies
+
+  ```sh
+  yarn add knex
+  yarn add fluture
+  ```
+3. Do not forget your DB connection layer, ex. sqlite3
+
+  ```sh
+  yarn add sqlite3
+  ```
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+Node.js "Hello World".
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+```js
+import Knex from 'knex'
+import Iodio from 'iodio'
 
+// Init the Knex DB connection config
+const db = Knex({
+    client: 'sqlite3',
+    connection: {
+        filename: 'tests/chinook.sqlite'
+    },
+    useNullAsDefault: true
+})
+
+// Construct Iodio object. Lift take DB connection and a params list.
+// Params are passed directly to knex: tableName, options={only: boolean}
+const q = Iodio.lift(db, ['Track'])
+
+// Then you can start working on your query
+// (qb is knew QueryBuilder)
+const q2 = q.qMap(qb => qb.limit(3))
+
+// Lets transform the result
+// res is the query result list
+const q3 = q2.map(res => res.map(row => row.Name + ' by  ' + row.Composer))
+
+// Let's filter by Composer
+// qMap second param 'p' is the Iodio params object
+const q4 = q3.qMap((qb, p) => qb.where({ Composer: p.Composer }))
+
+// Get a Iodio binded to Composer 'Red Hot Chili Peppers'
+const redHot = q4.pMap(() => ({
+    Composer: 'Red Hot Chili Peppers'
+}))
+
+// Get a Iodio binded to Composer 'Kurt Cobain'
+const cobain = q4.pMap(() => ({
+    Composer: 'Kurt Cobain'
+}))
+
+// I want to work on the result of the two query
+// we use async/await as DO Notation
+const redHotCobain = Iodio.merge([redHot, cobain])(async (redHot, cobain) => [
+    ...(await redHot),
+    ...(await cobain)
+])
+
+// N.B. no real query is actually executed at this point, it's all lazy
+//
+// To run all the constructed computations and effects
+// we call fork
+redHotCobain.fork(console.error)(console.log)
+```
+
+Output:
+```js
+[
+  'Parallel Universe by  Red Hot Chili Peppers',
+  'Scar Tissue by  Red Hot Chili Peppers',
+  'Otherside by  Red Hot Chili Peppers',
+  'Intro by  Kurt Cobain',
+  'School by  Kurt Cobain',
+  'Drain You by  Kurt Cobain'
+]
+```
 
 
 <!-- ROADMAP -->
