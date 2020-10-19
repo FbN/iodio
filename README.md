@@ -67,6 +67,8 @@ Some aspects of Knex I like less:
 So, let's introduce you IODIO. It's a monadic wrapper of a Knex query builder and a Fluture Future that represents the result of the query.
 It's lazy and pure, so you can program in advance your computations (query composition and/or result transformation) and run all as the last step.
 
+You can see it as a lazy Bifunctor, the *left* side represents the Knex QueryBuilder, and the *right* side the Fluture future value that wraps the results. Plus we have a simple object storing the query input parameters.
+
 ### Built With
 Iodio is implemented in a few lines of code that mix up some good libraries:
 * [Knex](http://knexjs.org/)
