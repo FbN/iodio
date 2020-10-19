@@ -3,8 +3,6 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
 
 
 <!-- PROJECT LOGO -->
@@ -34,7 +32,7 @@
     <a href="https://github.com/fantasyland/fantasy-land">
         <img src="https://github.com/fantasyland/fantasy-land/raw/master/logo.png" alt="Fluture" height="40" style="vertical-align: baseline"/>
     </a>
-    Implements Fantasy Land: <strong>Functor</strong>, <strong>Bifunctor</strong>,
+    Implements Fantasy Land:<br /><strong>Functor</strong>, <strong>Bifunctor</strong>,
     <strong>Apply</strong>, <strong>Applicative</strong>, <strong>Chain</strong>,
     <strong>Monad</strong>
   </p>
@@ -85,14 +83,6 @@ Iodio is implemented in a few lines of code that mix up some good libraries:
 
 This is an example of how you may give instructions on setting up your project locally.
 To get a local copy up and running follow these simple example steps.
-
-### Prerequisites
-
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-```sh
-npm install npm@latest -g
-```
 
 ## Getting Started
 
@@ -188,57 +178,188 @@ Output:
 
 
 <!-- ROADMAP -->
-## Roadmap
+## API
 
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a list of proposed features (and known issues).
+### Factories
+- [`of`](#of)
+- [`lift`](#lift)
+- [`resolve`](#resolve)
+- [`merge`](#merge)
 
+### Methods
+- [`pMap`](#pMap)
+- [`qMap`](#qMap)
+- [`map`](#map)
+- [`pipe`](#pipe)
+- [`ap`](#ap)
+- [`chain`](#chain)
+- [`bimap`](#bimap)
 
+### Consuming / Collapsing Methods
+- [`fork`](#fork)
+- [`collapse`](#collapse)
+- [`promise`](#promise)
+- [`first`](#first)
 
-<!-- CONTRIBUTING -->
-## Contributing
+## Factories
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+### <a id="of"></a> `of(pPred, qbR, fR)`
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+Iodio base constructor. It's rare to call it directly, you can call other more confortable constructors: lift, resolve, merge.
+(pPred, qbR, fR)
 
+#### Arguments:
 
+- `pPred: Function` Paramas Predicate: a function used to bind query params to Iodio monad. Take current params map as argument and return a new param map.
 
+- `qbR: ParamsFunction, QueryBuilderT<T>` QueryBuilder Reader: Monet Reader monad that wraps the knex query builder.
+
+- `fR: QueryBuilderT<T>, FutureInstanceArrayT<T>` Fluture Reader: Monet Reader monad that wraps the Fluture Future representing the query output.
+
+Returns:  **IodioInstance**
+
+- - -
+### <a id="lift"></a> `lift(db, args)`
+
+Contruct a new IodioInstance setting knex db connection object and an array of params to pass to knex to get the QueryBuilder.
+
+#### Arguments:
+
+- `db: knex` The knex configured DB Connection.
+
+- `args: Array<any>` An array to pass to knex connection to init the QueryBuilder, usually is the tableName plus other options ['TableName'].
+
+Returns:  **IodioInstance**
+- - -
+### <a id="resolve"></a> `resolve(db, args)`
+
+Contruct an IodioInstance resolved to a fixed value. Working on QueryBuilder of the resulting monad currently not supported.
+
+#### Arguments:
+
+- `v: any` The resolution value.
+
+Returns:  **IodioInstance**
+- - -
+### <a id="merge"></a> `merge(iodio1, iodio2, ...)(doAsyncFunction)`
+
+Useful to merge the result of two or more iodio instance and work on the values. It's like a DO notation implemented with async/await. Take present that the merge it's lazy. So a iodio passed to merge is not resolved (collapsed) until we request it's value in the supplied async function.
+
+#### Arguments:
+
+- `iodio1, iodio2, ...: IodioInstance` The IodioInstance wrapping the results we want to work with in the supplied async function
+
+- `doAsyncFunction: (Promise<iodio1 res>, Promise<iodio2 res>, ...) => Promise<res>` The async function that let us work with the requested iodio value.
+
+Returns:  **IodioInstance**
+- - -
+
+## Methods
+
+### <a id="pMap"></a> `pMap(pred)`
+
+Params Map. Function to transform the query params object binded to the monad.
+
+#### Arguments:
+
+- `pred: (a: Object=> a: Object)` Function that has the current binded params object as input and return the updated params object as output.
+
+Returns:  **IodioInstance**
+- - -
+
+### <a id="qMap"></a> `qMap(pred)`
+
+Query Mapper. Function to transform the knex wrapped QueryBuilder object. You can use this method to compose your query (working on Left side of the Bifunctor) without altering the future result transformations (Right side of the Bifunctor).
+
+#### Arguments:
+
+- `pred: ((qb: QueryBuilder, p: Object) => QueryBuilder)` For your confort the params object is passed as second argumet so you can reference binded params in the query.
+
+Returns:  **IodioInstance**
+- - -
+
+### <a id="map"></a> `map(pred)`
+
+Fluture Future Mapper. Function to work on the knex wrapped Fluture future monad. You can use this method to compose computations on the future result (working on Right side of the Bifunctor) without altering the QueryBuilder (Left side of the Bifunctor).
+
+#### Arguments:
+
+- `pred: (f: FutureInstance => f: FutureInstance)`
+
+Returns:  **IodioInstance**
+- - -
+
+### <a id="bimap"></a> `bimap(qPred, fPred)`
+
+It's like calling qMap and Map at the same time. Let you work on the two side of the Bifunctor.
+
+#### Arguments:
+
+- `qPred: ((qb: QueryBuilder, p: Object) => QueryBuilder)`
+- `fPred: (f: FutureInstance => f: FutureInstance)`
+
+Returns:  **IodioInstance**
+- - -
+
+### <a id="chain"></a> `chain(pred)`
+
+Like _map_ but the supplied function must return an IodioInstance. The computation will continue with the new IodioInstance.
+
+#### Arguments:
+
+- `pred` Function returning an IodioInstance
+
+Returns:  **IodioInstance**
+- - -
+
+### <a id="ap"></a> `ap(iodioFuntion)`
+
+Call the function wrapped as future value in the supplied IodioInstance passing the self future value as parameter.
+
+#### Arguments:
+
+- `iodioFuntion: IodioInstance` An Iodio Instance that wraps a function as future value.
+
+Returns:  **IodioInstance**
+- - -
+
+## Consuming / Collapsing Methods
+
+### <a id="fork"></a> `fork(left)(right)`
+
+Make the query collapse and excute it's effects on the Database. The results will be computed by the Fluture Future object and result passed to the right predicate. In case of error the left predicate is called.
+
+#### Arguments:
+
+- `left` Error predicate.
+- `right` Error predicate.
+
+Returns:  **Cancel**
+- - -
+### <a id="toString"></a> `toString()`
+
+Debug/Inspection method. Collapse the QueryBuilder (without running the actual query) and the Fluture Future, printing a string rapresentation of both and binded params map.
+
+Returns:  **String**
+- - -
+### <a id="first"></a> `first()`
+
+Shortcut for testing purpouse. Make the IodioInstance collapse, exectuing the DB effects and retur the first result object.
+
+Returns:  **String**
+- - -
 <!-- LICENSE -->
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
 
-
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+Fabiano Taioli - ftaioli@gmail.com
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
-
-
-
-<!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Img Shields](https://shields.io)
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Pages](https://pages.github.com)
-* [Animate.css](https://daneden.github.io/animate.css)
-* [Loaders.css](https://connoratherton.com/loaders)
-* [Slick Carousel](https://kenwheeler.github.io/slick)
-* [Smooth Scroll](https://github.com/cferdinandi/smooth-scroll)
-* [Sticky Kit](http://leafo.net/sticky-kit)
-* [JVectorMap](http://jvectormap.com)
-* [Font Awesome](https://fontawesome.com)
-
-
-
+Project Link: [https://github.com/FbN/iodio](https://github.com/FbN/iodio)
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
