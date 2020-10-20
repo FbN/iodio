@@ -56,7 +56,7 @@ Some aspects of Knex I like less:
 
 * **Mutable**. Every time you specialize in your query calling some method (.where, .limit, .join, etc.) you are mutating the same instance. This makes it harder to compose your apps.
 
-* **Not Lazy**. Being based on Promise, the query is materially executed the moment you call .then on the builder or try to "await" for the result. You cannot composer your program in a Pure way leaving the actual "impure" query execution as the last step.
+* **Not Lazy**. Being based on Promise, the query is materially executed the moment you call .resolve on the builder or try to "await" for the result. You cannot composer your program in a Pure way leaving the actual "impure" query execution as the last step.
 
 So, let's introduce you IODIO. It's a monadic wrapper of a Knex query builder and a Fluture Future that represents the result of the query.
 It's lazy and pure, so you can program in advance your computations (query composition and/or result transformation) and run all as the last step.
