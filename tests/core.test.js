@@ -242,7 +242,7 @@ test('Bifunctor: bimap', async t => {
 })
 
 test('Bifunctor: identity', async t => {
-    const { u, g1, f1 } = t.context
+    const { u } = t.context
     t.deepEqual(await u.bimap(I, I).first(), await u.first())
 })
 
@@ -267,4 +267,26 @@ test('Bifunctor: composition', async t => {
             .bimap(f, h)
             .first()
     )
+})
+
+test('to future', async t => {
+    const { db } = t.context
+    let lazyGuard = true
+    const query = Iodio.lift(db, ['Track'])
+        .qMap(qb => {
+            lazyGuard = false
+            return qb.where({ Composer: 'Nirvana' })
+        })
+        .qMap(qb => qb.limit(2))
+        .map(rows => {
+            lazyGuard = false
+            return rows.map(track => track.Name)
+        })
+
+    t.is(lazyGuard, true)
+    const futureValue = await query.future()
+    t.is(lazyGuard, true)
+    const value = await F.promise(futureValue)
+    t.is(lazyGuard, false)
+    t.deepEqual(value, ['Aneurysm', 'Smells Like Teen Spirit'])
 })

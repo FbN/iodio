@@ -181,6 +181,7 @@ Output:
 - [`ap`](#ap)
 - [`chain`](#chain)
 - [`bimap`](#bimap)
+- [`future`](#future)
 
 ### Consuming / Collapsing Methods
 - [`fork`](#fork)
@@ -308,6 +309,13 @@ Call the function wrapped as future value in the supplied IodioInstance passing 
 - `iodioFuntion: IodioInstance` An Iodio Instance that wraps a function as future value.
 
 Returns:  **IodioInstance**
+- - -
+
+### <a id="ap"></a> `future()`
+
+Transform Iodio to a Fluture Future wich wrapped value equals query result plus computation. No query is executed calling this method, query and computation will be done at time of forking returned future.
+
+Returns:  **FutureInstance**
 - - -
 
 ## Consuming / Collapsing Methods

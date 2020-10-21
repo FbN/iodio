@@ -80,6 +80,7 @@ const { Reader } = Monet
  *      fork: (left: any) => (right: any) => F.Cancel;
  *      collapse: () => FutureInstanceT<T>;
  *      promise: () => Promise<any>;
+ *      future: () => FutureInstanceT<T>;
  *      toString: () => string;
  *      first: () => Promise<any>;
  *      'fantasy-land/map': (pred: ResultPredicate<T, T>)  => IodioInstance<T>;
@@ -170,6 +171,10 @@ const Iodio = (pPred, qbR, fR) => {
 
     const first = () => promise().then(r => r && (Array.isArray(r) ? r[0] : r))
 
+    const future = () => F.Future(
+        (reject, resolve) => collapse().pipe(F.fork(reject)(resolve))
+    )
+
     return {
         pMap,
         qMap,
@@ -183,6 +188,7 @@ const Iodio = (pPred, qbR, fR) => {
         toString,
         first,
         collapse,
+        future,
         // Fantay Land Interface
         'fantasy-land/map': map,
         'fantasy-land/ap': ap,
