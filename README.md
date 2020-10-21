@@ -311,7 +311,7 @@ Call the function wrapped as future value in the supplied IodioInstance passing 
 Returns:  **IodioInstance**
 - - -
 
-### <a id="ap"></a> `future()`
+### <a id="future"></a> `future()`
 
 Transform Iodio to a Fluture Future wich wrapped value equals query result plus computation. No query is executed calling this method, query and computation will be done at time of forking returned future.
 
