@@ -1,3 +1,5 @@
+DISCONTINUED: please use [Futurity](https://github.com/FbN/futurity#readme)
+
 
 <!-- PROJECT LOGO -->
 <br />
